@@ -1,4 +1,6 @@
 import Data.List
+import Control.Parallel.Strategies
+import Control.DeepSeq
 import System.IO
 
 replaceNth n newVal (x:xs)
@@ -64,7 +66,7 @@ findRes f emptyIndexes=
         else if (canGo) 
              then let (i,j) = head emptyIndexes
                       nums = findPossibleNumbers f i j
-                      results = filter (\(r, f) -> r) (map (\n -> findRes (replaceNM i j n f) (tail emptyIndexes)) nums)
+                      results = filter (\(r, f) -> r) (map (\n -> findRes (replaceNM i j n f) (tail emptyIndexes)) nums) `using` parList rdeepseq
                       len = length results
                   in if (len > 0) then (True, foldl (\cur el -> cur ++ el) [] [x | (_,x) <- results])
                                   else (False, [[[3]]])
